@@ -1,0 +1,51 @@
+# Données brutes de l'atelier (A2). Le nom logique (companies, shuttles,
+# reviews) est ce que les nodes utilisent ; le chemin physique reste ici.
+# Doc : https://docs.kedro.org/en/stable/catalog-data/introduction/#data-catalog
+
+companies:
+  type: pandas.CSVDataset
+  filepath: data/01_raw/companies.csv
+
+shuttles:
+  type: pandas.ExcelDataset
+  filepath: data/01_raw/shuttles.xlsx
+  load_args:
+    engine: openpyxl
+
+reviews:
+  type: pandas.CSVDataset
+  filepath: data/01_raw/reviews.csv
+
+# Sorties persistées (A4) : le Parquet conserve les types (float, booléens),
+# contrairement au CSV, et se relit beaucoup plus vite.
+preprocessed_companies:
+  type: pandas.ParquetDataset
+  filepath: data/02_intermediate/preprocessed_companies.parquet
+
+preprocessed_shuttles:
+  type: pandas.ParquetDataset
+  filepath: data/02_intermediate/preprocessed_shuttles.parquet
+
+model_input_table:
+  type: pandas.ParquetDataset
+  filepath: data/03_primary/model_input_table.parquet
+
+# Sorties de la modélisation (A5).
+# Sécurité : ne charger que des fichiers pickle produits localement et de
+# confiance. Ouvrir un pickle inconnu peut exécuter du code arbitraire.
+regressor:
+  type: pickle.PickleDataset
+  filepath: data/06_models/regressor.pkl
+
+metrics:
+  type: json.JSONDataset
+  filepath: data/08_reporting/metrics.json
+
+predictions:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/predictions.csv
+  save_args:
+    index: false
+    # Sous Windows, pandas écrivait des fins de ligne « \r\r\n » (lignes vides
+    # dans Excel). "\n" donne un fichier propre sur toutes les plateformes.
+    lineterminator: "\n"

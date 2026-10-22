@@ -1,0 +1,10 @@
+# Surcharge « dev » (A6) : active avec `kedro run --env=dev`.
+# Le bloc model_options est donné EN ENTIER : Kedro remplace la clé de premier
+# niveau (voir le README, étape A6), il ne fusionne pas ses sous-clés.
+model_options:
+  test_size: 0.3
+  random_state: 42
+  features:
+    - passenger_capacity
+    - company_rating
+    - review_scores_rating
