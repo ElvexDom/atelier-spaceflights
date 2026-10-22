@@ -16,7 +16,7 @@ dependencies = [
     "jupyterlab>=3.0",
     "notebook",
     "kedro==1.7.0",
-    "kedro-datasets[json-jsondataset,pandas-csvdataset,pandas-exceldataset,pandas-parquetdataset,pickle-pickledataset]==9.6.0",
+    "kedro-datasets[json-jsondataset,pandas-csvdataset,pandas-exceldataset,pandas-parquetdataset,pickle-pickledataset,plotly-jsondataset]==9.6.0",
     "scikit-learn>=1.5,<2",
 ]
 

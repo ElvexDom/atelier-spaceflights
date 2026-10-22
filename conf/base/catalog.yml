@@ -1,34 +1,58 @@
 # Données brutes de l'atelier (A2). Le nom logique (companies, shuttles,
 # reviews) est ce que les nodes utilisent ; le chemin physique reste ici.
 # Doc : https://docs.kedro.org/en/stable/catalog-data/introduction/#data-catalog
+#
+# Séance B (B3) : `metadata.kedro-viz.layer` range chaque jeu de données dans une
+# couche du graphe ; `preview_args.nrows` limite l'aperçu tabulaire de Viz. Ces
+# métadonnées n'ont aucun effet sur le calcul.
 
 companies:
   type: pandas.CSVDataset
   filepath: data/01_raw/companies.csv
+  metadata:
+    kedro-viz:
+      layer: raw
+      preview_args:
+        nrows: 4
 
 shuttles:
   type: pandas.ExcelDataset
   filepath: data/01_raw/shuttles.xlsx
   load_args:
     engine: openpyxl
+  metadata:
+    kedro-viz:
+      layer: raw
 
 reviews:
   type: pandas.CSVDataset
   filepath: data/01_raw/reviews.csv
+  metadata:
+    kedro-viz:
+      layer: raw
 
 # Sorties persistées (A4) : le Parquet conserve les types (float, booléens),
 # contrairement au CSV, et se relit beaucoup plus vite.
 preprocessed_companies:
   type: pandas.ParquetDataset
   filepath: data/02_intermediate/preprocessed_companies.parquet
+  metadata:
+    kedro-viz:
+      layer: intermediate
 
 preprocessed_shuttles:
   type: pandas.ParquetDataset
   filepath: data/02_intermediate/preprocessed_shuttles.parquet
+  metadata:
+    kedro-viz:
+      layer: intermediate
 
 model_input_table:
   type: pandas.ParquetDataset
   filepath: data/03_primary/model_input_table.parquet
+  metadata:
+    kedro-viz:
+      layer: primary
 
 # Sorties de la modélisation (A5).
 # Sécurité : ne charger que des fichiers pickle produits localement et de
@@ -36,10 +60,16 @@ model_input_table:
 regressor:
   type: pickle.PickleDataset
   filepath: data/06_models/regressor.pkl
+  metadata:
+    kedro-viz:
+      layer: models
 
 metrics:
   type: json.JSONDataset
   filepath: data/08_reporting/metrics.json
+  metadata:
+    kedro-viz:
+      layer: reporting
 
 predictions:
   type: pandas.CSVDataset
@@ -49,3 +79,17 @@ predictions:
     # Sous Windows, pandas écrivait des fins de ligne « \r\r\n » (lignes vides
     # dans Excel). "\n" donne un fichier propre sur toutes les plateformes.
     lineterminator: "\n"
+  metadata:
+    kedro-viz:
+      layer: model_output
+      preview_args:
+        nrows: 4
+
+# Graphique (B4). Une figure Plotly utilise `plotly.JSONDataset` ;
+# `json.JSONDataset` sert au dictionnaire de métriques, pas à une figure.
+prediction_plot:
+  type: plotly.JSONDataset
+  filepath: data/08_reporting/prediction_plot.json
+  metadata:
+    kedro-viz:
+      layer: reporting

@@ -24,6 +24,7 @@ TAGS_ATTENDUS = {
     "split_data_node": {"train"},
     "train_model_node": {"train"},
     "evaluate_model_node": {"evaluate"},
+    "plot_predictions_node": {"reporting"},
 }
 
 
@@ -39,13 +40,19 @@ def noeuds(pipeline) -> dict:
 
 
 def test_les_pipelines_sont_enregistres(registre):
-    assert set(registre) == {"__default__", "data_processing", "data_science"}
+    assert set(registre) == {
+        "__default__",
+        "data_processing",
+        "data_science",
+        "reporting",
+    }
 
 
-def test_le_pipeline_par_defaut_contient_les_six_noeuds(registre):
+def test_le_pipeline_par_defaut_contient_les_sept_noeuds(registre):
     assert set(noeuds(registre["__default__"])) == set(TAGS_ATTENDUS)
     assert len(registre["data_processing"].nodes) == 3
     assert len(registre["data_science"].nodes) == 3
+    assert len(registre["reporting"].nodes) == 1
 
 
 def test_chaque_noeud_porte_le_bon_tag(registre):
@@ -76,6 +83,12 @@ def test_evaluation_produit_les_metriques_et_les_predictions(registre):
     assert noeud.outputs == ["metrics", "predictions"]
 
 
+def test_le_graphique_consomme_les_predictions(registre):
+    noeud = noeuds(registre["reporting"])["plot_predictions_node"]
+    assert noeud.inputs == ["predictions"]
+    assert noeud.outputs == ["prediction_plot"]
+
+
 def test_entrees_exterieures_de_chaque_pipeline(registre):
     # Ce que chaque pipeline doit trouver dans le catalogue ou la configuration.
     assert registre["data_processing"].inputs() == {"companies", "shuttles", "reviews"}
@@ -83,6 +96,7 @@ def test_entrees_exterieures_de_chaque_pipeline(registre):
         "model_input_table",
         "params:model_options",
     }
+    assert registre["reporting"].inputs() == {"predictions"}
 
 
 def test_ordre_d_execution_deduit_des_donnees(registre):
@@ -98,3 +112,4 @@ def test_ordre_d_execution_deduit_des_donnees(registre):
     assert position("create_model_input_table_node") < position("split_data_node")
     assert position("split_data_node") < position("train_model_node")
     assert position("train_model_node") < position("evaluate_model_node")
+    assert position("evaluate_model_node") < position("plot_predictions_node")
