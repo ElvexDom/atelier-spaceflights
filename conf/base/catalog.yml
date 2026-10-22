@@ -59,14 +59,16 @@ model_input_table:
 # confiance. Ouvrir un pickle inconnu peut exécuter du code arbitraire.
 regressor:
   type: pickle.PickleDataset
-  filepath: data/06_models/regressor.pkl
+  filepath: data/06_models/versioned_regressor.pkl
+  versioned: true
   metadata:
     kedro-viz:
       layer: models
 
 metrics:
   type: json.JSONDataset
-  filepath: data/08_reporting/metrics.json
+  filepath: data/08_reporting/versioned_metrics.json
+  versioned: true
   metadata:
     kedro-viz:
       layer: reporting
