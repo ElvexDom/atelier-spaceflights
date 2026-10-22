@@ -163,3 +163,7 @@ venv.bak/
 
 # mlflow local runs
 mlruns/*
+
+# Exception : la version de Python épinglée par uv doit être versionnée, pour
+# qu'un clone reconstruise le même environnement (reproductibilité, étape A8).
+!.python-version
