@@ -54,28 +54,45 @@ model_input_table:
     kedro-viz:
       layer: primary
 
-# Sorties de la modélisation (A5).
+# Sorties des modèles (séance C, C2) : une entrée explicite par branche.
+# Le modèle et les métriques sont versionnés (un sous-dossier horodaté par exécution).
 # Sécurité : ne charger que des fichiers pickle produits localement et de
 # confiance. Ouvrir un pickle inconnu peut exécuter du code arbitraire.
-regressor:
+baseline.regressor:
   type: pickle.PickleDataset
-  filepath: data/06_models/versioned_regressor.pkl
+  filepath: data/06_models/baseline/regressor.pkl
   versioned: true
   metadata:
     kedro-viz:
       layer: models
 
-metrics:
+candidate.regressor:
+  type: pickle.PickleDataset
+  filepath: data/06_models/candidate/regressor.pkl
+  versioned: true
+  metadata:
+    kedro-viz:
+      layer: models
+
+baseline.metrics:
   type: json.JSONDataset
-  filepath: data/08_reporting/versioned_metrics.json
+  filepath: data/08_reporting/baseline/metrics.json
   versioned: true
   metadata:
     kedro-viz:
       layer: reporting
 
-predictions:
+candidate.metrics:
+  type: json.JSONDataset
+  filepath: data/08_reporting/candidate/metrics.json
+  versioned: true
+  metadata:
+    kedro-viz:
+      layer: reporting
+
+baseline.predictions:
   type: pandas.CSVDataset
-  filepath: data/07_model_output/predictions.csv
+  filepath: data/07_model_output/baseline/predictions.csv
   save_args:
     index: false
     # Sous Windows, pandas écrivait des fins de ligne « \r\r\n » (lignes vides
@@ -87,11 +104,24 @@ predictions:
       preview_args:
         nrows: 4
 
-# Graphique (B4). Une figure Plotly utilise `plotly.JSONDataset` ;
-# `json.JSONDataset` sert au dictionnaire de métriques, pas à une figure.
-prediction_plot:
+candidate.predictions:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/candidate/predictions.csv
+  save_args:
+    index: false
+    lineterminator: "\n"
+  metadata:
+    kedro-viz:
+      layer: model_output
+      preview_args:
+        nrows: 4
+
+# Graphique (B4) : seule la branche baseline en a un pour l'instant.
+# Une figure Plotly utilise `plotly.JSONDataset` ; `json.JSONDataset` sert au
+# dictionnaire de métriques, pas à une figure.
+baseline.prediction_plot:
   type: plotly.JSONDataset
-  filepath: data/08_reporting/prediction_plot.json
+  filepath: data/08_reporting/baseline/prediction_plot.json
   metadata:
     kedro-viz:
       layer: reporting

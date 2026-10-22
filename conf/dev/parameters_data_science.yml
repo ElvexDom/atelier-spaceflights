@@ -1,10 +1,20 @@
-# Surcharge « dev » (A6) : active avec `kedro run --env=dev`.
-# Le bloc model_options est donné EN ENTIER : Kedro remplace la clé de premier
-# niveau (voir le README, étape A6), il ne fusionne pas ses sous-clés.
-model_options:
-  test_size: 0.3
-  random_state: 42
-  features:
-    - passenger_capacity
-    - company_rating
-    - review_scores_rating
+# Surcharge « dev » (A6, adaptée en C2) : active avec `kedro run --env=dev`.
+# Kedro remplace chaque clé de premier niveau en entier (voir le README, étape A6) :
+# il faut donc redonner les blocs `baseline` et `candidate` complets. Ici seul
+# `test_size` change (0,3 au lieu de 0,2).
+
+baseline:
+  model_options:
+    test_size: 0.3
+    random_state: 42
+    features:
+      - passenger_capacity
+      - company_rating
+      - review_scores_rating
+
+candidate:
+  model_options:
+    test_size: 0.3
+    random_state: 42
+    features:
+      - passenger_capacity
