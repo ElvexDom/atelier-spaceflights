@@ -18,3 +18,12 @@ candidate:
     random_state: 42
     features:
       - passenger_capacity
+
+# Séance C, C4 : troisième configuration, mêmes test_size et random_state.
+capacity_rating:
+  model_options:
+    test_size: 0.2
+    random_state: 42
+    features:
+      - passenger_capacity
+      - company_rating

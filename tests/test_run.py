@@ -22,7 +22,7 @@ from kedro.framework.session import KedroSession
 from kedro.framework.startup import bootstrap_project
 
 RACINE = Path(__file__).resolve().parents[1]
-BRANCHES = ("baseline", "candidate")
+BRANCHES = ("baseline", "candidate", "capacity_rating")
 
 # Nom du nœud -> tags attendus.
 TAGS_ATTENDUS = {
@@ -66,6 +66,11 @@ def test_le_pipeline_par_defaut_contient_tous_les_noeuds(registre):
     assert len(registre["reporting"].nodes) == 1
     for branche in BRANCHES:
         assert len(registre[branche].nodes) == 3
+
+
+def test_le_run_complet_comporte_treize_noeuds(registre):
+    # 3 nœuds de préparation + 3 branches x 3 nœuds + 1 graphique.
+    assert len(registre["__default__"].nodes) == 13
 
 
 def test_chaque_noeud_porte_le_bon_tag(registre):
