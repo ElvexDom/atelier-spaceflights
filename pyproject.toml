@@ -27,6 +27,7 @@ atelier-spaceflights = "atelier_spaceflights.__main__:main"
 
 [project.optional-dependencies]
 dev = [
+    "kedro-viz>=12.5.0",
     "pytest-cov>=3,<7",
     "pytest-mock>=1.7.1, <2.0",
     "pytest~=7.2",
