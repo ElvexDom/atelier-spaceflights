@@ -54,45 +54,33 @@ model_input_table:
     kedro-viz:
       layer: primary
 
-# Sorties des modèles (séance C, C2) : une entrée explicite par branche.
-# Le modèle et les métriques sont versionnés (un sous-dossier horodaté par exécution).
+# Sorties des modèles (séance C, C3) : quatre « factories » (modèles de noms)
+# remplacent les sept entrées explicites de C2. `{namespace}` capture le préfixe
+# de la branche (baseline, candidate, ...) et le réutilise dans le chemin : ajouter
+# une branche ne demande plus aucune ligne ici.
+# Les noms de factories restent entre guillemets (l'accolade est un caractère
+# spécial en YAML). Le modèle et les métriques sont versionnés.
 # Sécurité : ne charger que des fichiers pickle produits localement et de
 # confiance. Ouvrir un pickle inconnu peut exécuter du code arbitraire.
-baseline.regressor:
+"{namespace}.regressor":
   type: pickle.PickleDataset
-  filepath: data/06_models/baseline/regressor.pkl
+  filepath: data/06_models/{namespace}/regressor.pkl
   versioned: true
   metadata:
     kedro-viz:
       layer: models
 
-candidate.regressor:
-  type: pickle.PickleDataset
-  filepath: data/06_models/candidate/regressor.pkl
-  versioned: true
-  metadata:
-    kedro-viz:
-      layer: models
-
-baseline.metrics:
+"{namespace}.metrics":
   type: json.JSONDataset
-  filepath: data/08_reporting/baseline/metrics.json
+  filepath: data/08_reporting/{namespace}/metrics.json
   versioned: true
   metadata:
     kedro-viz:
       layer: reporting
 
-candidate.metrics:
-  type: json.JSONDataset
-  filepath: data/08_reporting/candidate/metrics.json
-  versioned: true
-  metadata:
-    kedro-viz:
-      layer: reporting
-
-baseline.predictions:
+"{namespace}.predictions":
   type: pandas.CSVDataset
-  filepath: data/07_model_output/baseline/predictions.csv
+  filepath: data/07_model_output/{namespace}/predictions.csv
   save_args:
     index: false
     # Sous Windows, pandas écrivait des fins de ligne « \r\r\n » (lignes vides
@@ -104,24 +92,12 @@ baseline.predictions:
       preview_args:
         nrows: 4
 
-candidate.predictions:
-  type: pandas.CSVDataset
-  filepath: data/07_model_output/candidate/predictions.csv
-  save_args:
-    index: false
-    lineterminator: "\n"
-  metadata:
-    kedro-viz:
-      layer: model_output
-      preview_args:
-        nrows: 4
-
-# Graphique (B4) : seule la branche baseline en a un pour l'instant.
-# Une figure Plotly utilise `plotly.JSONDataset` ; `json.JSONDataset` sert au
-# dictionnaire de métriques, pas à une figure.
-baseline.prediction_plot:
+# Graphique (B4). Une figure Plotly utilise `plotly.JSONDataset` ; `json.JSONDataset`
+# sert au dictionnaire de métriques, pas à une figure. Seule la branche baseline
+# en produit un pour l'instant ; la factory est prête pour les autres.
+"{namespace}.prediction_plot":
   type: plotly.JSONDataset
-  filepath: data/08_reporting/baseline/prediction_plot.json
+  filepath: data/08_reporting/{namespace}/prediction_plot.json
   metadata:
     kedro-viz:
       layer: reporting
